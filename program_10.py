@@ -64,7 +64,7 @@ def CalcTqmean(Qvalues):
     meanQ=Qvalues.mean()
     
     #Calculating the fraction of time when Qvalues exceeds mean value
-    Tqmean=((Qvalues>meanQ).sum())/len(Qvalues)
+    Tqmean=(((Qvalues > meanQ).sum())/len(Qvalues))
     return ( Tqmean )
 
 def CalcRBindex(Qvalues):
@@ -134,7 +134,7 @@ def GetAnnualStatistics(DataDF):
     starts on October 1."""
     # define column names for a annual dataframe,WYDataDF
     colNamesA = ['site_no', 'Mean Flow', 'Peak Flow', 'Median',
-                 'Coeff Var','Skew','Tqmean','R-B Index','7Q','3xMedian']
+                 'Coeff Var','Skew','TQmean','R-B Index','7Q','3xMedian']
     
     #annual data resampling, as water year starts from sept to oct
     annualdata=DataDF.resample('AS-OCT').mean()
@@ -152,7 +152,7 @@ def GetAnnualStatistics(DataDF):
     WYDataDF['Median']=WY['Discharge'].median()
     WYDataDF['Coeff Var']=(WY['Discharge'].std()/WY['Discharge'].mean())*100
     WYDataDF['Skew']=WY.apply({'Discharge': lambda x: stats.skew(x,nan_policy='omit',bias=False)},raw=True)
-    WYDataDF['Tqmean']=WY.apply({'Discharge': lambda x: CalcTqmean(x)})
+    WYDataDF['TQmean']=WY.apply({'Discharge': lambda x: CalcTqmean(x)})
     WYDataDF['R-B Index']=WY.apply({'Discharge': lambda x: CalcRBindex(x)})
     WYDataDF['7Q']=WY.apply({'Discharge': lambda x: Calc7Q(x)})
     WYDataDF['3xMedian']=WY.apply({'Discharge': lambda x: CalcExceed3TimesMedian(x)})
@@ -165,7 +165,7 @@ def GetMonthlyStatistics(DataDF):
     for the given streamflow time series.  Values are returned as a dataframe
     of monthly values for each year."""
     # define column names for a monthly dataframe,WYDataDF
-    colNamesB = ['site_no', 'Mean Flow','Coeff Var','Tqmean','R-B Index']
+    colNamesB = ['site_no', 'Mean Flow','Coeff Var','TQmean','R-B Index']
     
     #monthly data resampling,
     monthlydata=DataDF.resample('MS').mean()
@@ -180,7 +180,7 @@ def GetMonthlyStatistics(DataDF):
     MoDataDF['site_no']=MD['site_no'].mean()
     MoDataDF['Mean Flow']=MD['Discharge'].mean()
     MoDataDF['Coeff Var']=(MD['Discharge'].std()/MD['Discharge'].mean())*100
-    MoDataDF['Tqmean']=MD.apply({'Discharge': lambda x: CalcTqmean(x)})
+    MoDataDF['TQmean']=MD.apply({'Discharge': lambda x: CalcTqmean(x)})
     MoDataDF['R-B Index']=MD.apply({'Discharge': lambda x: CalcRBindex(x)})
    
     
