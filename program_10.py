@@ -133,7 +133,7 @@ def GetAnnualStatistics(DataDF):
     annual values for each water year.  Water year, as defined by the USGS,
     starts on October 1."""
     # define column names for a annual dataframe,WYDataDF
-    colNamesA = ['site_no', 'Mean Flow', 'Peak Flow', 'Median Flow',
+    colNamesA = ['site_no', 'Mean Flow', 'Peak Flow', 'Median',
                  'Coeff Var','Skew','Tqmean','R-B Index','7Q','3xMedian']
     
     #annual data resampling, as water year starts from sept to oct
@@ -149,7 +149,7 @@ def GetAnnualStatistics(DataDF):
     WYDataDF['site_no']=WY['site_no'].mean()
     WYDataDF['Mean Flow']=WY['Discharge'].mean()
     WYDataDF['Peak Flow']=WY['Discharge'].max()
-    WYDataDF['Median Flow']=WY['Discharge'].median()
+    WYDataDF['Median']=WY['Discharge'].median()
     WYDataDF['Coeff Var']=(WY['Discharge'].std()/WY['Discharge'].mean())*100
     WYDataDF['Skew']=WY.apply({'Discharge': lambda x: stats.skew(x,nan_policy='omit',bias=False)},raw=True)
     WYDataDF['Tqmean']=WY.apply({'Discharge': lambda x: CalcTqmean(x)})
@@ -168,13 +168,13 @@ def GetMonthlyStatistics(DataDF):
     colNamesB = ['site_no', 'Mean Flow','Coeff Var','Tqmean','R-B Index']
     
     #monthly data resampling,
-    monthlydata=DataDF.resample('M').mean()
+    monthlydata=DataDF.resample('MS').mean()
     
     #Creating a empty dataframe with columnnames and index
     MoDataDF=pd.DataFrame(0,index=monthlydata.index, columns=colNamesB)
     
     #Selecting variables for monthly data set
-    MD=DataDF.resample('M')
+    MD=DataDF.resample('MS')
     
     #Creating the data for each columns
     MoDataDF['site_no']=MD['site_no'].mean()
