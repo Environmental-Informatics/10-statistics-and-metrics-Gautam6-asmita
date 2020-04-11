@@ -42,8 +42,12 @@ def ClipData( DataDF, startDate, endDate ):
     """This function clips the given time series dataframe to a given range 
     of dates. Function returns the clipped dataframe and and the number of 
     missing values."""
-    DataDF[startDate:endDate]
+    #For cliping data
+    DataDF=DataDF[startDate:endDate]
+    
+    #Counting nodata values
     MissingValues = DataDF["Discharge"].isna().sum()
+    
     return( DataDF, MissingValues )
 
 def CalcTqmean(Qvalues):
@@ -55,8 +59,10 @@ def CalcTqmean(Qvalues):
        the Tqmean value for the given data array."""
     #Removing Nas, no data  values
     Qvalues=Qvalues.dropna()
+    
     #Calculating mean of Qvalues
     meanQ=Qvalues.mean()
+    
     #Calculating the fraction of time when Qvalues exceeds mean value
     Tqmean=((Qvalues>meanQ).sum())/len(Qvalues)
     return ( Tqmean )
@@ -71,17 +77,23 @@ def CalcRBindex(Qvalues):
        routine returns the RBindex value for the given data array."""
     #Removing Nas,no data values
     Qvalues=Qvalues.dropna()
+    
     #Changes inflow
     ChangQ= Qvalues.diff()
+    
     #Removing the change in flow values with no differences
     ChangQ=ChangQ.dropna()
-    #Calculating the absolute values of change in flow
+    
+    #Calculating the absolute values of change in flow and it's sum
     abCQ=abs(ChangQ)
     abCQT=abCQ.sum()
+    
     #Total discharge
     TQvalues=Qvalues.sum()
+    
     #Calculating the ratio as RBindex
     RBindex=abCQT/TQvalues
+    
     return ( RBindex )
 
 def Calc7Q(Qvalues):
@@ -93,9 +105,9 @@ def Calc7Q(Qvalues):
        that year.  The routine returns the 7Q (7-day low flow) value
        for the given data array."""
     Qvalues=Qvalues.dropna()   #Removing na
-    #val7Q=pd.rolling_mean(Qvalues,7),calculating the rolling mean
-    #Calculating rolling mean as selecting the minimum value
+    #Calculating rolling mean and selecting the minimum value
     val7Q=Qvalues.rolling(window=7).mean().min()
+    
     return ( val7Q )
 
 def CalcExceed3TimesMedian(Qvalues):
@@ -107,8 +119,11 @@ def CalcExceed3TimesMedian(Qvalues):
        than 3 times the median annual flow value for the given data array."""
     #Removing Nans
     Qvalues=Qvalues.dropna()
+    
     #Creating threshold
     Threshold=3*Qvalues.median()
+    
+    #Counts the discharge which are greater than the threshold and it's sum
     median3x=(Qvalues>Threshold).sum()
     return ( median3x )
 
