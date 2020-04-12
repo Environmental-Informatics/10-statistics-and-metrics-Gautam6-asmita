@@ -170,13 +170,13 @@ def GetMonthlyStatistics(DataDF):
     colNamesB = ['site_no', 'Mean Flow','Coeff Var','TQmean','R-B Index']
     
     #monthly data resampling,
-    monthlydata=DataDF.resample('M').mean()
+    monthlydata=DataDF.resample('MS').mean()
     
     #Creating a empty dataframe with columnnames and index
     MoDataDF=pd.DataFrame(0,index=monthlydata.index, columns=colNamesB)
     
     #Selecting variables for monthly data set
-    MD=DataDF.resample('M')
+    MD=DataDF.resample('MS')
     
     #Creating the data for each columns
     MoDataDF['site_no']=MD['site_no'].mean()
@@ -185,7 +185,6 @@ def GetMonthlyStatistics(DataDF):
     MoDataDF['TQmean']=MD.apply({'Discharge': lambda x: CalcTqmean(x)})
     MoDataDF['R-B Index']=MD.apply({'Discharge': lambda x: CalcRBindex(x)})
    
-    
     return ( MoDataDF )
 
 def GetAnnualAverages(WYDataDF):
