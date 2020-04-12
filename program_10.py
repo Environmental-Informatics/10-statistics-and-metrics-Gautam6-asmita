@@ -7,6 +7,8 @@
 # and repository at:
 # https://github.com/Environmental-Informatics/assignment-10.git for more
 # details about the assignment.
+#Completed by : Asmita Gautam
+#Assignment completed on: 11th april 2020
 #
 import pandas as pd
 import scipy.stats as stats
@@ -168,13 +170,13 @@ def GetMonthlyStatistics(DataDF):
     colNamesB = ['site_no', 'Mean Flow','Coeff Var','TQmean','R-B Index']
     
     #monthly data resampling,
-    monthlydata=DataDF.resample('MS').mean()
+    monthlydata=DataDF.resample('M').mean()
     
     #Creating a empty dataframe with columnnames and index
     MoDataDF=pd.DataFrame(0,index=monthlydata.index, columns=colNamesB)
     
     #Selecting variables for monthly data set
-    MD=DataDF.resample('MS')
+    MD=DataDF.resample('M')
     
     #Creating the data for each columns
     MoDataDF['site_no']=MD['site_no'].mean()
@@ -199,9 +201,27 @@ def GetMonthlyAverages(MoDataDF):
     """This function calculates annual average monthly values for all 
     statistics and metrics.  The routine returns an array of mean values 
     for each metric in the original dataframe."""
-    #Colculating mean of each column
-    MonthlyAverages=MoDataDF.mean(axis=0)
+    #Create an empty dataframe
+    cols=['site_no','Mean Flow','Coeff Var','TQmean','R-B Index']
+    MonthlyAverages= pd.DataFrame(0,index=range(1,13),columns=cols)
+    #Monthly Average sites
+    for n in range(0,12):
+       MonthlyAverages.iloc[n,0]= MoDataDF['site_no'][::12].mean()
     
+    #Defining months
+    index=[(0,3),(1,4),(2,5),(3,6),(4,7),(5,8),(6,9),(7,10),(8,11),(9,0),(10,1),(11,2)]
+    
+    
+    #For other variables
+    for (n,m) in index:
+        MonthlyAverages.iloc[n,1]=MoDataDF['Mean Flow'][m::12].mean()#For monthly mean flow average 
+    for (n,m) in index:  
+        MonthlyAverages.iloc[n,2]=MoDataDF['Coeff Var'][m::12].mean()  #For monthly Coeff average
+    for (n,m) in index:
+        MonthlyAverages.iloc[n,3]=MoDataDF['TQmean'][m::12].mean()     #For monthly TQ mean average
+    for (n,m) in index:
+        MonthlyAverages.iloc[n,4]=MoDataDF['R-B Index'][m::12].mean()  #For month R-B index average
+        
     return( MonthlyAverages )
 
 # the following condition checks whether we are running as a script, in which 
